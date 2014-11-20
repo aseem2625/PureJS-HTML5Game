@@ -25,5 +25,5 @@ https://dl.dropboxusercontent.com/u/63965573/Pure%20JS%20Game/My%20Canvas%20Game
   * Ball to controller-player :yet to be done
   * Controller-Player to box edges: DONE
 * Score update on ball hit to mad balls : yet to be done
-* Bug: Related to Controller-player's movement on keypress and smooth movement
-* Bug: Pressing Arrow key vanishes the player while count down
+* Bug: Related to Controller-player's movement on keypress and smooth movement : yet to be done
+* Bug: Pressing Arrow key vanishes the player while count down: yet to be done
