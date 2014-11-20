@@ -1,7 +1,8 @@
 PureJS-HTML5Game
 ================
 
-Project undertaken to learn HTML5-JS game
+Project undertaken to learn HTML5-JS game.
+(No intention of completing the game but just to practive HTML5 canvas and JS)
 
 # Note:
 * This game is undertaken to learn HTML5-JS game implementation without any framework.
@@ -9,6 +10,7 @@ However, the collision detection is not completed(Collision detection is done on
 But if you wish to learn then you can learn a lot from other completed parts.
 
 # To test the game
+Hey don't forget to press 'Y' to start the game
 https://dl.dropboxusercontent.com/u/63965573/Pure%20JS%20Game/My%20Canvas%20Game.html
 
 # Roadmap:
