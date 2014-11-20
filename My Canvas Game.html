@@ -1,0 +1,1084 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <style>
+      body {
+        margin: 0px;
+        padding: 0px;
+        background-color: #2b1100;
+      }
+
+      #myCanvas
+      {
+        border-radius: 20px;
+        margin-left: 12%;
+        margin-top: -1%;
+      }
+
+      h1{
+
+        color: white;
+        margin-left:28%;
+        margin-top:2%;
+        font-size: 44px;
+        font-family: Papyrus;
+      }
+
+      #RuleBox{
+        font-family: Papyrus;
+        color: white;
+        position: absolute;
+         margin-left:78%;
+         margin-top:-35%;
+         background-color: #6f2c00;
+         overflow: auto;
+         height: 550px;
+         width:300px;
+         font-size: 28px;
+         padding-left: 10px 
+      }
+      
+      p{
+         color: white;
+         font-family: Papyrus;
+         font-size: 22px;
+         padding-left: 10px;
+      }
+
+
+    </style>
+
+    <script>
+      var l;//for frameRefresh stopping
+      var t;//for time stopping
+      var restartFlag;
+      var canvas;
+
+      var OX,OY,date,time, startgameFlag,balls,player,bullet,jackAss,removeBalls;
+
+      window.requestAnimFrame = (function(callback) {
+        return function(callback) {
+          if (restartFlag==0){
+                     l= window.setTimeout(callback, 1000/60);
+          }
+          else if(restartFlag==1)
+          {
+            window.clearTimeout(l);
+            clearTimeout(t);
+            
+              context=canvas.getContext('2d');
+              context.clearRect(0, 0, canvas.width, canvas.height);
+              MyGame();              
+
+            firstfunc(canvas, balls, time,player,bullet,jackAss);
+            timedCount();
+
+          }
+
+        };
+      })();
+
+var u, ct;
+function firstfunc(canvas, balls, time,player,bullet,jackAss)
+{
+  u=setTimeout("firstfunc(canvas, balls, time,player,bullet,jackAss)",1000);
+  ct--;
+
+    context=canvas.getContext('2d');
+if(ct>7){
+    context.clearRect(0, 0, canvas.width, canvas.height);
+    context.font = 'bold 180px Papyrus';
+    context.fillStyle="blue"
+    context.fillText(ct,canvas.width/2-10,canvas.height/2);
+}
+  
+else if(ct<=7 && ct>0)
+{
+  draw(canvas, balls,player,bullet);  
+    context.font = 'bold 180px Papyrus';
+    context.fillStyle="blue"
+    context.fillText(ct,canvas.width/2-10,canvas.height/2);
+
+}
+  if(ct ==3){
+    var rndN;
+    for(var n=0;n<30;n++)
+    {
+      removeBalls=removeMeSafely();
+    }
+
+  }
+  else if(ct==0)
+  {
+    clearTimeout(u);
+    timedCount();
+    animate(canvas, balls, time,player,bullet,jackAss);
+  }
+
+}
+
+function removeMeSafely()
+{
+
+for(var g=0;g<removeBalls.length;g++)
+{
+  removeBalls.pop();
+}
+return removeBalls;
+/*  if(index==0)
+  {
+    return balls.splice(1);
+  }
+  else if(index==balls.length-1)
+  {
+    return balls.splice(0,balls.length-1);
+  }
+  else{
+    var dummyL,dummyR;
+    dummyL=balls.splice(0,index);
+    dummyR=balls.splice(index+1);
+    return dummyL.concat(dummyR);    
+  }
+*/
+}
+
+
+      function draw(canvas, balls,player,bullet) { //sp is characterBar
+        var context = canvas.getContext('2d');
+
+        // clear
+        context.clearRect(0, 0, canvas.width, canvas.height);
+
+        // render Balls
+        for(var n = 0; n < balls.length; n++) {
+          var ball = balls[n];
+          context.beginPath();
+          context.fillStyle = ball.color;
+          context.arc(ball.x, ball.y, ball.radius, 0, 2 * Math.PI, false);
+          context.fill();
+        }
+        context.closePath();
+
+/*Rendering the balls to be removed*/
+        // render Balls
+        for(var n = 0; n < removeBalls.length; n++) {
+          var removeBall = removeBalls[n];
+          context.beginPath();
+          context.fillStyle = removeBall.color;
+          context.arc(removeBall.x, removeBall.y, removeBall.radius, 0, 2 * Math.PI, false);
+          context.fill();
+        }
+        context.closePath();
+
+
+  /*Rendering character Bar*/
+          context.beginPath();
+          context.fillStyle = player.clr;
+          context.fillRect(player.x,player.y, player.barlength,15); //15 is width of BAR.
+          context.fill();
+          context.closePath();
+
+
+/* Drawing a Line on canvas*/
+        context.beginPath();
+        context.moveTo(0,0.6*canvas.height);
+        context.lineTo(canvas.width,0.6*canvas.height);
+        context.strokeStyle = "black";
+        context.lineWidth = 1;
+        context.stroke();
+        context.closePath();
+
+}
+
+      function initBalls() {
+        balls = [];
+        removeBalls = [];
+
+        var blue = '#3A5BCD';
+        var red = '#EF2B36';
+        var yellow = '#FFC636';
+        var green = '#02A817';
+        
+        var gap=canvas.width/20;
+        var vtop=canvas.height/4;
+        
+        var offset1=canvas.width/6;
+        var offset3=offset1+gap;
+        var Koffset=offset3+2.2*gap;
+        var Foffset=Koffset+3*gap;
+        var Uoffset=Foffset+2*gap;
+        var Noffset=Uoffset+2.5*gap;
+        
+        //1
+        balls.push(new Ball(offset1,vtop,0,0,blue));
+        removeBalls.push(new Ball(offset1,vtop+25,0,0,blue));
+        removeBalls.push(new Ball(offset1,vtop+50,0,0,blue));
+        removeBalls.push(new Ball(offset1,vtop+75,0,0,blue));
+        balls.push(new Ball(offset1,vtop+100,0,0,blue));
+
+        //3
+        balls.push(new Ball(offset3,vtop,0,0,green));
+        removeBalls.push(new Ball(offset3+25,vtop,0,0,green));
+        balls.push(new Ball(offset3+50,vtop,0,0,green));
+        balls.push(new Ball(offset3+75,vtop,0,0,green));
+
+        balls.push(new Ball(offset3+55,vtop+25,0,0,green));
+        removeBalls.push(new Ball(offset3+38,vtop+47,0,0,green));
+        balls.push(new Ball(offset3+65,vtop+62,0,0,green));
+
+        balls.push(new Ball(offset3+58,vtop+88,0,0,green));
+        balls.push(new Ball(offset3+35,vtop+100,0,0,green));
+        balls.push(new Ball(offset3+9,vtop+95,0,0,green));
+        removeBalls.push(new Ball(offset3,vtop+75,0,0,green));
+
+        //K
+
+        balls.push(new Ball(Koffset,vtop,0,0,red));
+        balls.push(new Ball(Koffset,vtop+25,0,0,red));
+        removeBalls.push(new Ball(Koffset,vtop+50,0,0,red));
+        removeBalls.push(new Ball(Koffset,vtop+75,0,0,red));
+        removeBalls.push(new Ball(Koffset,vtop+100,0,0,red));
+        
+        balls.push(new Ball(Koffset+30,vtop+35,0,0,red));
+        balls.push(new Ball(Koffset+60,vtop+18,0,0,red));
+        balls.push(new Ball(Koffset+27,vtop+67,0,0,red));
+        balls.push(new Ball(Koffset+50,vtop+85,0,0,red));
+        removeBalls.push(new Ball(Koffset+70,vtop+100,0,0,red));        
+
+        //F
+        balls.push(new Ball(Foffset,vtop,0,0,yellow));
+        balls.push(new Ball(Foffset,vtop+25,0,0,yellow));
+        removeBalls.push(new Ball(Foffset,vtop+50,0,0,yellow));
+        removeBalls.push(new Ball(Foffset,vtop+75,0,0,yellow));
+        balls.push(new Ball(Foffset,vtop+100,0,0,yellow));
+
+        balls.push(new Ball(Foffset+25,vtop,0,0,yellow ));
+        balls.push(new Ball(Foffset+50,vtop,0,0,yellow ));
+        removeBalls.push(new Ball(Foffset+75,vtop,0,0,yellow ));
+
+        removeBalls.push(new Ball(Foffset+25,vtop+50,0,0,yellow));
+        balls.push(new Ball(Foffset+50,vtop+50,0,0,yellow));
+
+        //U
+        balls.push(new Ball(Uoffset,vtop,0,0,green));
+        balls.push(new Ball(Uoffset,vtop+25,0,0,green));
+        balls.push(new Ball(Uoffset,vtop+50,0,0,green));
+        removeBalls.push(new Ball(Uoffset,vtop+75,0,0,green));
+
+        removeBalls.push(new Ball(Uoffset+21,vtop+95,0,0,green));
+        balls.push(new Ball(Uoffset+78,vtop+95,0,0,green));
+        balls.push(new Ball(Uoffset+50,vtop+100,0,0,green));
+
+        balls.push(new Ball(Uoffset+2*gap,vtop,0,0,green));
+        balls.push(new Ball(Uoffset+2*gap,vtop+25,0,0,green));
+        removeBalls.push(new Ball(Uoffset+2*gap,vtop+50,0,0,green));
+        removeBalls.push(new Ball(Uoffset+2*gap,vtop+75,0,0,green));
+
+        //N
+        balls.push(new Ball(Noffset,vtop,0,0,red));
+        balls.push(new Ball(Noffset,vtop+25,0,0,red));
+        removeBalls.push(new Ball(Noffset,vtop+50,0,0,red));
+        removeBalls.push(new Ball(Noffset,vtop+75,0,0,red));
+        balls.push(new Ball(Noffset,vtop+100,0,0,red));
+
+        balls.push(new Ball(Noffset+2*gap,vtop,0,0,red));
+        removeBalls.push(new Ball(Noffset+2*gap,vtop+25,0,0,red));
+        removeBalls.push(new Ball(Noffset+2*gap,vtop+50,0,0,red));
+        removeBalls.push(new Ball(Noffset+2*gap,vtop+75,0,0,red));
+        balls.push(new Ball(Noffset+2*gap,vtop+100,0,0,red));
+
+        removeBalls.push(new Ball(Noffset+70,vtop+75,0,0,red));
+        balls.push(new Ball(Noffset+50,vtop+50,0,0,red));
+        balls.push(new Ball(Noffset+30,vtop+25,0,0,red));
+        
+        return balls;
+      }
+
+/*      function initShip()
+      {
+
+        var sp;
+        sp= new Ship(450, 125, 0, 0));
+        return sp;
+      }
+*/
+
+/*      function getMousePos(canvas, evt) {
+        // get canvas position
+        var obj = canvas;
+        var top = 0;
+        var left = 0;
+        while(obj.tagName != 'BODY') {
+          top += obj.offsetTop;
+          left += obj.offsetLeft;
+          obj = obj.offsetParent;
+        }
+
+        // return relative mouse position
+        var mouseX = evt.clientX - left + window.pageXOffset;
+        var mouseY = evt.clientY - top + window.pageYOffset;
+        return {
+          x: mouseX,
+          y: mouseY
+        };
+      }*/
+
+      var flJABounceV, flJABounceH;
+      var stuckHintX,stuckHintY;
+      function updateJackAss(canvas, jackAss, timeDiff) 
+      {
+
+        var floorFriction = 0.3 * timeDiff;
+       
+        if(flJABounceV==0){
+//        jackAss.vy=-0.4*timeDiff;
+          jackAss.vy=-(1+Math.floor(rndPos*2))/10*timeDiff; // for random speed between 0.1-0.3 
+          jackAss.vy/=2;
+        }
+        else if(flJABounceV==1){
+//         jackAss.vy=0.4*timeDiff;
+          jackAss.vy=(1+Math.floor(rndPos*2))/10*timeDiff;
+          jackAss.vy/=2;
+        }
+        if(flJABounceH==0){
+//        jackAss.vx=-0.4*timeDiff;          
+          jackAss.vx=-(2+Math.floor(rndPos*3))/10*timeDiff;// for random speed between 0.2-0.4
+          jackAss.vx/=2;
+        }
+        else if(flJABounceH==1){
+//        jackAss.vx=0.4*timeDiff;
+          jackAss.vx=(2+Math.floor(rndPos*3))/10*timeDiff;
+          jackAss.vx/=2;
+        }
+
+          stuckHintX=jackAss.x;
+          stuckHintY=jackAss.y;
+          jackAss.y += jackAss.vy;
+          jackAss.x += jackAss.vx;
+
+
+//Error Handling Code for the hidden JackAss because this adds real fun in the Game so it should not went down
+          if(stuckHintX-jackAss.x<=3 && stuckHintY-jackAss.y<=3)
+          {
+            jackAss.vy *=-1;
+            jackAss.vx *=-1;
+          }
+
+          // floor friction
+          if(jackAss.vy < 0) {
+            jackAss.vy += floorFriction;
+          }
+          else if(jackAss.vy > 0) {
+            jackAss.vy -= floorFriction;
+          }
+          if(jackAss.vx < 0) {
+            jackAss.vx += floorFriction;
+          }
+          else if(jackAss.vx > 0) {
+            jackAss.vx -= floorFriction;
+          }
+
+
+          // ceiling condition
+          if(jackAss.y <= jackAss.length ) {
+            jackAss.y = jackAss.length/2+10;
+            flJABounceV=1;
+          }
+          else if(jackAss.y>=(0.6*canvas.height-jackAss.length))
+          {
+            jackAss.y=0.6*canvas.height-jackAss.length/2-10;
+            jackAss.vy *=-1;
+            flJABounceV=0;
+          }      
+          // SideWall Condition
+          if(jackAss.x <= jackAss.length) {
+            jackAss.x = jackAss.length/2+10;
+            flJABounceH=1;
+          }
+          else if(jackAss.x>=(canvas.width-jackAss.length/2))
+          {
+            jackAss.x=canvas.width-jackAss.length/2-10;
+            jackAss.vx *=-1;
+            flJABounceH=0;
+          }      
+
+      }
+/*var stepDegrees=2,stepCounter=0,stepsFullRevolution= parseInt(360,stepDegrees) ,tRotationOut;
+      function rotateJackAss(canvas,jackAss,timeDiff)
+      {
+          context=canvas.getContext('2d');
+          // Rotate the context and thus our jackAss
+          context.rotate(Math.PI * stepDegrees * stepCounter / 180);
+
+//Rendering the jackAss Triangle
+          context.beginPath();
+          context.fillStyle=jackAss.color;
+          context.strokeStyle="black";
+          context.moveTo(jackAss.x,jackAss.y);
+          context.lineWidth=6;
+          context.lineTo(jackAss.x+0,jackAss.y+0); //diagonal line
+          context.lineTo(jackAss.x+0,jackAss.y+12); //bottom line
+          context.lineTo(jackAss.x+jackAss.length,jackAss.y+6); //left line
+          context.closePath();
+          context.stroke();
+
+          context.restore();
+
+          stepCounter++;
+          if (stepCounter>=(stepsFullRevolution-1)) {
+          stepCounter=0;
+          }
+
+          tRotationOut=setTimeout("rotateJackAss(canvas,jackAss,timeDiff)",1000/60);
+      }
+*/
+
+      function updateBalls(canvas, balls, timeDiff,jackAss) {
+        var context = canvas.getContext('2d');
+        var collisionDamper = 0.3;
+        var floorFriction = 0.0006 * timeDiff;
+        var JForceMultiplier = 1 * timeDiff;
+        var restoreForce = 0.002 * timeDiff;
+
+        for(var n = 0; n < balls.length; n++) {
+          var ball = balls[n];
+          // set ball position based on velocity
+          ball.y += ball.vy;
+          ball.x += ball.vx;
+
+          // restore forces
+          if(ball.x > ball.origX) {
+            ball.vx -= restoreForce;
+          }
+          else {
+            ball.vx += restoreForce;
+          }
+          if(ball.y > ball.origY) {
+            ball.vy -= restoreForce;
+          }
+          else {
+            ball.vy += restoreForce;
+          }
+
+          // JA forces
+          var jX = jackAss.x;
+          var jY = jackAss.y;
+
+          var distX = ball.x - jX;
+          var distY = ball.y - jY;
+
+          var radius = Math.sqrt(Math.pow(distX, 2) + Math.pow(distY, 2));
+
+          var totalDist = Math.abs(distX) + Math.abs(distY);
+
+          var forceX = (Math.abs(distX) / totalDist) * (1 / radius) * JForceMultiplier;
+          var forceY = (Math.abs(distY) / totalDist) * (1 / radius) * JForceMultiplier;
+
+          if(distX > 0) {// JA is left of ball
+            ball.vx += forceX;
+          }
+          else {
+            ball.vx -= forceX;
+          }
+          if(distY > 0) {// JA is on top of ball
+            ball.vy += forceY;
+          }
+          else {
+            ball.vy -= forceY;
+          }
+
+          // floor friction
+          if(ball.vx > 0) {
+            ball.vx -= floorFriction;
+          }
+          else if(ball.vx < 0) {
+            ball.vx += floorFriction;
+          }
+          if(ball.vy > 0) {
+            ball.vy -= floorFriction;
+          }
+          else if(ball.vy < 0) {
+            ball.vy += floorFriction;
+          }
+
+          // floor condition
+          if(ball.y > (0.6*canvas.height - ball.radius)) {
+            ball.y = 0.6* canvas.height - ball.radius - 2;
+            ball.vy *= -1;
+            ball.vy *= (1 - collisionDamper);
+          }
+
+          // ceiling condition
+          if(ball.y < (ball.radius)) {
+            ball.y = ball.radius + 2;
+            ball.vy *= -1;
+            ball.vy *= (1 - collisionDamper);
+          }
+
+          // right wall condition
+          if(ball.x > (canvas.width - ball.radius)) {
+            ball.x = canvas.width - ball.radius - 2;
+            ball.vx *= -1;
+            ball.vx *= (1 - collisionDamper);
+          }
+
+          // left wall condition
+          if(ball.x < (ball.radius)) {
+            ball.x = ball.radius + 2;
+            ball.vx *= -1;
+            ball.vx *= (1 - collisionDamper);
+          }
+        }
+      }
+
+
+
+      var flBulletBounce;
+      function updateBullet(canvas, bullet, timeDiff) 
+      {
+
+        var floorFriction = 0.3 * timeDiff;
+       
+        if(flBulletBounce==0){
+        bullet.vy=-0.8*timeDiff;          
+        }
+        else if(flBulletBounce==1){
+          bullet.vy=0.8*timeDiff;
+        }
+
+        if (bullet.shootboolean==1)
+        {
+
+          bullet.y += bullet.vy;
+
+          // restore forces
+
+          // floor friction
+          if(bullet.vy < 0) {
+            bullet.vy += floorFriction;
+          }
+          else if(bullet.vy > 0) {
+            bullet.vy -= floorFriction;
+          }
+
+          // ceiling condition
+          if(bullet.y <= bullet.radius ) {
+            bullet.y = 2*bullet.radius;
+            flBulletBounce=1;
+          }
+          else if(bullet.y>=(canvas.height-bullet.radius))
+          {
+            bullet.y=canvas.height-bullet.radius;
+            bullet.vy *=-1;
+            flBulletBounce=0;
+          }      
+        }
+
+        else {
+          bullet.x=player.x+player.barlength/2;
+          bullet.y=player.y-10;
+
+        }
+
+      }
+
+
+      var ballRadius=[8,11,14];
+      var scoreValue=[100,60,40];
+      function Ball(x, y, vx, vy, color) {
+        this.x = x;
+        this.y = y;
+        this.vx = vx;
+        this.vy = vy;
+        this.color = color;
+        this.origX = x;
+        this.origY = y;
+        var ind=Math.floor(Math.random()*3);
+        this.radius = ballRadius[ind];
+        this.ballScore= scoreValue[ind];
+      }
+
+
+
+
+      function initBar()
+      {
+
+        var color="black";
+        var positionX=OX;
+        var positionY=OY;
+        
+        return (new buildBar(positionX,positionY,0.2,0.2,100,color)) ;
+
+      }
+
+      function buildBar(x,y,vx,vy,length,clr){
+        this.x=x;
+        this.y=y;
+        this.vx=vx;
+        this.vy=vy;
+        this.clr=clr;
+        this.barlength=length
+        this.origX = x;
+        this.origY = y;
+        this.movementFlag=null;
+      }
+
+
+      var arrayBulletColor= ["#FFC636","red","green","blue"];
+      function createBullet(m,n)
+      {
+        var bullet;
+        
+        var index=Math.floor(Math.random()*4);
+        
+        bullet=new Bullet(m,n,0,0,arrayBulletColor[index]);
+        return bullet;
+      }
+
+      function Bullet(x,y,vx,vy,color)
+      {
+        this.x = x;
+        this.y = y;
+        this.vy = vy;
+        this.vx = 0; //lets set x velocity of Bullet to be always 0;
+        this.color = color;
+        this.origX = x;
+        this.origY = y;
+        this.radius = 6;
+        this.shootboolean=0;//whether this bullet is shooted or not.
+
+      }
+
+      var rndPos;
+      var chooseUpDown;
+      function createJackAss()
+      {
+        var temp=chooseUpDown[UDindSel];
+        var jA;
+        jA=new JackAss(canvas.width/2-temp,0.6*canvas.height/2-temp,0,0,"pink");
+        return jA;
+      }
+      function JackAss(x,y,vx,vy,color)
+      {
+        this.x=x;
+        this.y=y;
+        this.vx=vx;
+        this.vy=vy;
+        this.color=color;
+        this.length=16;
+      }
+
+/*
+      var PlayerTimedt;
+*/
+      var j;
+
+      function smoothPlayer(canvas,player)
+      {
+
+        var speedX=0.05*timeDiff;
+        var speedY=0.05*timeDiff;
+        var floorFriction=0.03*timeDiff;
+        var damp=0.08*timeDiff;
+        
+        if(player.movementFlag==1)//Left
+        {
+          speedX*=-1;
+          speedX+=(floorFriction+damp);
+        }
+        else if(player.movementFlag==2)//Up
+        {
+          speedY *=-1;
+          speedY+=(floorFriction+damp);
+        }
+        else if(player.movementFlag==3)//Right
+        {
+          speedX-=(floorFriction+damp);
+        }
+        else if(player.movementFlag==4)//Down
+        {
+          speedY-=(floorFriction+damp);
+        }
+        else if(player.movementFlag==0)
+        {
+          speedX=-damp;
+          speedY=-damp;
+        }
+
+        player.x+=speedX;
+        player.y+=speedY;
+
+
+        //LEFT WALL
+        if(player.x<-player.barlength/2)
+        {
+          player.x=-player.barlength/2+5;
+        }
+
+        //RIGHT WALL
+        else if(player.x>canvas.width-player.barlength/2)
+          player.x=canvas.width-player.barlength/2-5;
+
+        //TOP WALL
+        else if(player.y<0.6*canvas.height+20)
+          player.y=0.6*canvas.height+20;
+
+        //BOTTOM WALL
+        else if(player.y>canvas.height-canvas.height/9)
+          player.y=canvas.height-canvas.height/9;
+
+
+        j=setTimeout("smoothPlayer(canvas,player)",1000/60);
+      }
+
+
+var timeDiff;
+var LiveAuxNewDate;
+
+var ft=null;
+function alwaysNewDate(ft)
+{
+  var ltime=(new Date()).getTime();
+  timeDiff=ltime-ft;
+  ft=ltime;
+  LiveAuxNewDate = setTimeout("alwaysNewDate(ft)",1000/60);
+}
+
+      function updateBar(evt)
+      {
+
+
+        player.vx=2*timeDiff;
+        player.vy=2*timeDiff;
+        var jumpBack=0.001*timeDiff;
+
+        if (startgameFlag==0 && evt.keyCode == '89') //Press Y to start the game
+        {
+          startgameFlag=1;
+          firstfunc(canvas, balls, time,player,bullet,jackAss);
+        }
+
+        else {
+
+              switch (evt.keyCode) {
+                // LEFT arrow.
+              case 37:
+              player.movementFlag=1;
+              smoothPlayer(canvas,player);
+                break;
+
+                // RIGHT arrow.
+              case 39:
+              player.movementFlag=3;
+              smoothPlayer(canvas,player);
+                break;
+
+                // DOWN arrow
+              case 40:
+              player.movementFlag=4;
+              smoothPlayer(canvas,player);
+                break;
+
+                // UP arrow 
+              case 38:
+              player.movementFlag=2;
+              smoothPlayer(canvas,player);
+                break;
+  
+              case 82:
+                restartFlag=1;
+       
+              break;
+
+              case 65:
+
+              bullet.shootboolean=1;
+//              bullet=createBullet(player.x+player.barlength,player.y-10);
+
+              break;
+              case 80: // Press P to pause Game
+              pauseFlag=1;
+              var tempTime=(new Date()).getTime();
+              alwaysNewDate(tempTime);
+              window.clearTimeout(l);
+              clearTimeout(t);
+//               alert("Game is Paused. \nPress Enter/Esc/Ok to Continue");
+//              pauseFlag=0;
+              break;
+              case 68: //Press D to resume Game
+              if(pauseFlag==1){
+                clearTimeout(LiveAuxNewDate);
+                animate(canvas, balls, time,player,bullet,jackAss);
+                timedCount();
+              }
+              pauseFlag=0;
+               break;
+/*              case 81:// Q to resume.
+                if(restartFlag==1)
+                { 
+                  restartFlag=0;
+                  animate(canvas, balls, time, mousePos,player,bullet);       
+                  timedCount();         
+                }
+              break;
+*/
+              default:
+                player.movementFlag = 0;
+                smoothPlayer(canvas,player);
+                //alert("Please only use the arrow keys.");
+          }
+
+        }
+
+      }
+
+/*Timer Function*/
+var readTime;
+var c;
+//var t;
+
+function timedCount()
+{
+  readTime=200-c;
+  c=c+1;
+
+  if(readTime <= 0){
+    clearTimeout(t);
+  }
+    t=setTimeout("timedCount()",1000);
+
+}
+
+
+/*function startGame(evt)
+{
+
+  if(evt.keyCode == '66'){
+
+          animate(canvas, balls, time, mousePos,player,bullet);
+  }
+}
+*/
+
+
+
+      function animate(canvas, balls, lastTime,player,bullet,jackAss) { //sp is characterBar
+        var context = canvas.getContext('2d');
+
+        // update
+        var date = new Date();
+        var time = date.getTime();
+        timeDiff = time - lastTime;
+
+ //       if (bullet.shootboolean==1)
+        updateBullet(canvas,bullet,timeDiff);
+
+        updateJackAss(canvas,jackAss,timeDiff);
+        updateBalls(canvas, balls, timeDiff,jackAss);
+        
+        lastTime = time;
+
+        // clear
+        context.clearRect(0, 0, canvas.width, canvas.height);
+
+        // render Balls
+        for(var n = 0; n < balls.length; n++) {
+          var ball = balls[n];
+          context.beginPath();
+          context.fillStyle = ball.color;
+          context.arc(ball.x, ball.y, ball.radius, 0, 2 * Math.PI, false);
+          context.fill();
+        }
+        context.closePath();
+
+          /*Rendering the Hidden jackAss */
+
+          context.beginPath();
+          context.fillStyle ='rgba(0,0,45,0.01)';
+          context.fillRect(jackAss.x,jackAss.y, jackAss.length,jackAss.length);
+          context.fill();
+          context.closePath();
+
+
+  /*Rendering character Bar*/
+          context.beginPath();
+          context.fillStyle = player.clr;
+          context.fillRect(player.x,player.y, player.barlength,15); //15 is width of BAR.
+          context.fill();
+          context.closePath();
+
+
+
+
+/*Rendering BulletBalls*/
+          context.beginPath();
+          context.fillStyle = bullet.color;
+          context.arc(bullet.x, bullet.y, bullet.radius, 0, 2 * Math.PI, false);
+          context.fill();
+          context.closePath();
+
+
+/*
+//Rendering the Hidden jackAss 
+
+          context.beginPath();
+          context.fillStyle = 'rgba(a,f,0,0)';
+          context.fillRect(jackAss.x,jackAss.y, jackAss.length,jackAss.length);
+          context.fill();
+          context.closePath();
+*/
+/*          context.beginPath();
+          context.fillStyle='blue';
+          context.strokeStyle='rgba(a,f,0,1)';
+          context.moveTo(jackAss.x,jackAss.y);
+          context.lineWidth=3;
+          context.lineTo(jackAss.x+0,jackAss.y+0); //diagonal line
+          context.lineTo(jackAss.x+0,jackAss.y+12); //bottom line
+          context.lineTo(jackAss.x+jackAss.length,jackAss.y+6); //left line
+          context.closePath();
+          context.stroke();*/
+
+/* Drawing a Line on canvas*/
+        context.beginPath();
+        context.moveTo(0,0.6*canvas.height);
+        context.lineTo(canvas.width,0.6*canvas.height);
+        context.strokeStyle = "black";
+        context.lineWidth = 1;
+        context.stroke();
+        context.closePath();
+
+
+/* Writing Time, Level, Ball_Count and Points on Canvas.*/
+        context.font = 'bold 20px Papyrus';
+        context.fillStyle="red"
+        context.fillText('Time Left:',15,canvas.height-20);
+        context.fillText('Points:',canvas.width-200,canvas.height-20);
+        context.fillText('Level - ',15, canvas.height-50);
+        context.fillText('Balls Hit - ',canvas.width-200,canvas.height-50);
+        context.font = 'bold 30px Papyrus';
+          context.fillText(readTime+'s',120,canvas.height-20);
+          //context.fillText(levelCounter,120, canvas.height-50);
+//          context.fillText(ballCounter,canvas.width-120,canvas.height-50);
+//          context.fillText(readScore,15,canvas.height-20);
+        
+        // request new frame
+
+//        gameFrame=setTimeout("animate(canvas, balls, lastTime, mousePos,player,bullet)",1000/60);
+
+
+
+        requestAnimFrame(function() {
+          animate(canvas, balls, lastTime,player,bullet,jackAss);
+        });
+      }
+
+//      var canvas = document.getElementById('myCanvas');
+//      var gameFrame;
+
+var Counter;
+
+
+
+var UDindSel;
+var pauseFlag;
+function MyGame()
+{
+      canvas = document.getElementById('myCanvas');
+      startgameFlag=0;
+
+       date = new Date();
+       time = date.getTime();
+       ct=10;
+       rndPos=Math.random();
+       UDindSel=Math.floor(rndPos*2); 
+       chooseUpDown=[-1,1];
+
+       jackAss=createJackAss();
+
+       balls = initBalls();
+      
+       OX=canvas.width/2;//Math.floor(Math.random() * canvas.width);
+       OY=canvas.height-canvas.height/8//canvas.height-Math.floor(Math.random() * canvas.height/3)-2; 
+
+       player = initBar();
+//      var bullet=createBullet();
+
+       bullet=createBullet(player.x+player.barlength/2,player.y-10);
+
+    
+       pauseFlag=0;
+       restartFlag=0;
+       flJABounceV=0;
+       flJABounceH=0;
+       flBulletBounce=0;
+
+       readTime =200;
+       c=0;
+       
+//       rotateJackAss(canvas, jackAss,timeDiff);
+
+      /*
+       * set mouse position really far away
+       * so the mouse forces are nearly obsolete
+       */
+/*       mousePos = {
+        x: 9999,
+        y: 9999
+      };
+      
+
+      canvas.addEventListener('mousemove', function(evt) {
+        var pos = getMousePos(canvas, evt);
+        mousePos.x = pos.x;
+        mousePos.y = pos.y;
+      });
+
+      canvas.addEventListener('mouseout', function(evt) {
+        mousePos.x = 9999;
+        mousePos.y = 9999;
+      });*/
+
+
+      /* Add keyboard listener */
+
+      window.addEventListener('keydown', updateBar, true);
+            
+//      smoothPlayer(time);
+//      canvas.addEventListener('keydown',startGame,true);  
+}
+
+
+    </script>
+
+  </head>
+  
+  <body onload="MyGame()">
+
+
+      <h1> 13K &nbsp FUN&nbsp&nbsp MAD &nbsp&nbspBalls</h1>
+<div>
+    <canvas id="myCanvas" style="background-color: #d5f6ff;" width="1000%" height="600%"> Your Browser Doesnot support HTML5. Please newest version of Google/firefox</canvas> 
+<div>
+
+  <div id="RuleBox">
+      <head>Controls: </head>
+      <p>
+          1) 'Y' to start Game</br>
+          2) Left-Right Arrow Keys</br>
+          3) 'A' to Shoot</br> 
+          4) Press 'R' to restart </br>
+      </p>
+
+      <p style="padding-left:5px; text-align:center;">I Bet You!! </br>Its NOT EASY</p>
+      <head>Rules: </head>
+      <p>
+        1) Fireball kills Waterball and viceversa.</br>
+        2) Yellowball Poisons Greenball and viceversa       
+      </p>
+
+  </div>
+
+  </body>
+</html>
+      
