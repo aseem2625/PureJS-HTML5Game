@@ -6,8 +6,8 @@ Project undertaken to learn HTML5-JS game.
 
 # Note:
 * This game is undertaken to learn HTML5-JS game implementation without any framework.
-However, the collision detection is not completed(Collision detection is done only for the ball to edges). 
-But if you wish to learn then you can learn a lot from other completed parts.
+However, the collision detection is not completed.
+But if you wish then you can learn a lot from other completed parts of the game.
 
 # To test the game
 Hey don't forget to press 'Y' to start the game
