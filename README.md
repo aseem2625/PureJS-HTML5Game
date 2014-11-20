@@ -11,6 +11,8 @@ But if you wish then you can learn a lot from other completed parts of the game.
 
 # To test the game
 Hey don't forget to press 'Y' to start the game
+Whenever run in problem refresh(Press F5)the page or PRESS 'R' to restart.
+(Don't press any arrow keys while Countdown otherwise player's is vanished)
 https://dl.dropboxusercontent.com/u/63965573/Pure%20JS%20Game/My%20Canvas%20Game.html
 
 # Roadmap:
@@ -23,4 +25,5 @@ https://dl.dropboxusercontent.com/u/63965573/Pure%20JS%20Game/My%20Canvas%20Game
   * Ball to controller-player :yet to be done
   * Controller-Player to box edges: DONE
 * Score update on ball hit to mad balls : yet to be done
-* Bugs related to Controller-player's movement on keypress and smooth movement
+* Bug: Related to Controller-player's movement on keypress and smooth movement
+* Bug: Pressing Arrow key vanishes the player while count down
